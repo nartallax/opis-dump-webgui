@@ -13,6 +13,7 @@ export interface OwnershipChunkRange {
 	readonly y: number
 	readonly width: number
 	readonly height: number
+	id?: number
 }
 
 export const getDefaultOwnership = (): Ownership => ({dims: {}})

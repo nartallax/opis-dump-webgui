@@ -6,7 +6,7 @@ import RBush, {BBox} from "rbush"
 
 const isDev = window.location.hostname === "localhost"
 const dumpUrl = isDev ? "http://localhost:61537/chunk_stats_dump.tsv" : "https://api.zonasumraka.ru/chunk_stats_dump.tsv"
-const ownershipUrl = "https://api.zonasumraka.ru/chunk_ownership.json"
+const ownershipUrl = "./chunk_ownership.json"
 
 export async function loadDump(dump: WBox<Dump | null>): Promise<void> {
 	const resp = await fetch(dumpUrl)
@@ -14,6 +14,7 @@ export async function loadDump(dump: WBox<Dump | null>): Promise<void> {
 	dump.set(parseDump(buffer))
 }
 
+export const regionId = {id: 1}
 export async function loadOwnership(ownership: WBox<Ownership>): Promise<void> {
 	let result: Ownership
 	if(isDev){
@@ -23,6 +24,13 @@ export async function loadOwnership(ownership: WBox<Ownership>): Promise<void> {
 		const resp = await fetch(ownershipUrl)
 		result = await resp.json()
 	}
+
+	for(const dim of Object.values(result.dims)){
+		for(const region of dim.byChunks){
+			region.id = regionId.id++
+		}
+	}
+
 	ownership.set(result)
 }
 

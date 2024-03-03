@@ -8,7 +8,7 @@
   "scripts": {
     "release": "npm run typecheck && npm run release:prepare && npm run release:client",
     "release:prepare": "rm -rf ./target && rm -rf ./dist && mkdir target",
-    "release:client": "npm run icons:generate && npx parcel build --target client_release --no-cache && mv dist/client_release/* target",
+    "release:client": "npm run icons:generate && npx parcel build --target client_release --no-cache --public-url ./ && mv dist/client_release/* target",
     "dev": "npm run typecheck && npm run icons:generate && npm run dev:client & npx serve -l 61537 --no-port-switching --cors & wait",
     "dev:client": "npx parcel serve --target client_dev --no-cache --no-hmr --port 24658",
     "typecheck": "cd src && npx tsc --noEmit && cd - > /dev/null",

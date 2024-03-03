@@ -17,6 +17,7 @@ import mcp.mobius.opis.data.holders.newtypes.*;
 import mcp.mobius.opis.data.holders.stats.StatsChunk;
 import mcp.mobius.opis.data.managers.ChunkManager;
 import mcp.mobius.opis.data.managers.EntityManager;
+import mcp.mobius.opis.data.managers.MetaManager;
 import mcp.mobius.opis.data.managers.StringCache;
 import mcp.mobius.opis.data.managers.TileEntityManager;
 import mcp.mobius.opis.data.profilers.ProfilerPacket;
@@ -41,7 +42,7 @@ public enum OpisServerTickHandler {
     public EventTimer timer5000 = new EventTimer(5000);
     public EventTimer timer10000 = new EventTimer(10000);
     // <custom update: stat dumping>
-    public EventTimer timer1Minute = new EventTimer(1000 * 60);
+    public EventTimer dumpTimer = new EventTimer(1000 * 60 * 60 * 2);
     // </custom update: stat dumping>
 
     public HashMap<EntityPlayerMP, AccessLevel> cachedAccess = new HashMap<>();
@@ -60,12 +61,6 @@ public enum OpisServerTickHandler {
     // <custom update: stat dumping>
     // also add required imports, you get the idea
     private void dump() {
-        if (!modOpis.profilerRun) {
-            modOpis.profilerRun = true;
-            ProfilerSection.activateAll(Side.SERVER);
-            return;
-        }
-
         String dumpFileName = "./chunk_stats_dump.tsv";
         File f = new File(dumpFileName);
         FileOutputStream s = null;
@@ -115,8 +110,14 @@ public enum OpisServerTickHandler {
         StringCache.INSTANCE.syncNewCache();
 
         // <custom update: stat dumping>
-        if (timer1Minute.isDone()) {
-            dump();
+        if (dumpTimer.isDone()) {
+            if (!modOpis.profilerRun) {
+                MetaManager.reset();
+                modOpis.profilerRun = true;
+                ProfilerSection.activateAll(Side.SERVER);
+                PacketManager.sendPacketToAllSwing(
+                        new NetDataValue(Message.STATUS_START, new SerialInt(modOpis.profilerMaxTicks)));
+            }
         }
         // </custom update: stat dumping>
 
@@ -233,6 +234,10 @@ public enum OpisServerTickHandler {
             profilerRunningTicks = 0;
             modOpis.profilerRun = false;
             ProfilerSection.desactivateAll(Side.SERVER);
+
+            // <custom update: stat dumping>
+            dump();
+            // </custom update: stat dumping>
 
             PacketManager.sendPacketToAllSwing(
                     new NetDataValue(Message.STATUS_STOP, new SerialInt(modOpis.profilerMaxTicks)));

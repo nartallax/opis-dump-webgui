@@ -20,7 +20,7 @@ const goodColor = 0x00ff00
 const badColor = 0xff0000
 // not based on anything really
 const goodEnd = 250
-const badEnd = 100000
+const badEnd = 250000
 
 export const Chunks = (props: Props) => {
 	return constBoxWrap(props.chunks).mapArray(
@@ -41,6 +41,10 @@ const Chunk = (chunk: RBox<DumpChunk>, props: Props) => {
 			}),
 			top: chunk.prop("z").map(z => z + "px"),
 			left: chunk.prop("x").map(x => x + "px")
+		},
+		onClick: () => {
+			const {x, z} = chunk.get()
+			void navigator.clipboard.writeText(x + ", " + z)
 		}
 	})
 
@@ -51,7 +55,7 @@ const Chunk = (chunk: RBox<DumpChunk>, props: Props) => {
 		const {x, z, load} = chunk.get()
 		const totalLoad = unbox(props.dump)?.totalLoad ?? 0
 		const coordsStr = `Coords: x = ${x}, z = ${z}`
-		const loadStr = `Load: ${load.toFixed(2)} (${((load / totalLoad) * 100).toFixed(2)}%)`
+		const loadStr = `Load: ${(load / 1000000).toFixed(3)}ms (${((load / totalLoad) * 100).toFixed(2)}%)`
 		const ownershipStr = `Owned by: ${getChunkOwnership(props.ownership.get(), props.selectedDim, x, z)}`
 		chunkHint = tag({
 			class: css.chunkHint,

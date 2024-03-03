@@ -11,6 +11,7 @@ import {ceilTo, chunkSize, floorTo, regionSize, roundTo, screenCoordsToInworldCo
 import {Regions} from "chunk_map/regions"
 import {Grid} from "chunk_map/grid"
 import {Chunks} from "chunk_map/chunks"
+import {regionId} from "data"
 
 interface Props {
 	selectedDim: number
@@ -121,7 +122,8 @@ export const ChunkMap = ({chunks, dump, isEditing, ownership, selectedDim, rebui
 			x: roundTo(pan.x.get(), chunkSize) - (chunkSize * 2),
 			y: roundTo(pan.y.get(), chunkSize) - (chunkSize * 2),
 			width: chunkSize * 4,
-			height: chunkSize * 4
+			height: chunkSize * 4,
+			id: regionId.id++
 		}
 		const o = ownership.get()
 		ownership.set({

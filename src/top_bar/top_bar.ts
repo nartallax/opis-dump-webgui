@@ -57,7 +57,15 @@ export const TopBar = (props: Props) => {
 				}),
 				tag({
 					tag: "button",
-					onClick: () => requestAnimationFrame(() => alert(JSON.stringify(props.ownership.get())))
+					onClick: () => requestAnimationFrame(() => {
+						const o = {...props.ownership.get()}
+						for(const dim of Object.values(o.dims)){
+							for(const region of dim.byChunks){
+								delete region.id
+							}
+						}
+						alert(JSON.stringify(o))
+					})
 				}, ["Ownership JSON"])
 			])
 		]),

@@ -20,7 +20,7 @@ export const LoadTop = (props: Props) => {
 			entry => tag({class: css.loadEntry}, [
 				tag([entry.prop("owner")]),
 				tag([calcBox([entry.prop("load"), props.dump], (load, dump) => {
-					const loadTimeStr = Math.round(load) + ""
+					const loadTimeStr = (load / 1000000).toFixed(3) + "ms"
 					const loadPercentStr = ((load / (dump?.totalLoad ?? 0)) * 100).toFixed(2)
 					return `${loadTimeStr} (${loadPercentStr}%)`
 				})])

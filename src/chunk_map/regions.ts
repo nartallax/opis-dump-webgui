@@ -19,7 +19,7 @@ interface Props {
 export const Regions = ({pan, isEditing, regions, rebuildTop}: Props) => {
 	return tag([
 		regions.mapArray(
-			(_, i) => i,
+			range => range.id,
 			range => {
 				const region = tag({
 					class: [css.ownershipRegion, {
@@ -47,7 +47,11 @@ export const Regions = ({pan, isEditing, regions, rebuildTop}: Props) => {
 				addCursorMoveHandler({
 					element: region,
 					onDown: e => {
-						if(!isEditing.get() || hasTargetWithClass(e, css.regionPivot!)){
+						if(hasTargetWithClass(e, css.regionPivot!)){
+							return false
+						}
+
+						if(!isEditing.get()){
 							showRegionModal(e, range, isEditing)
 							return false
 						}
