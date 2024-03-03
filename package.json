@@ -1,0 +1,49 @@
+{
+  "name": "@nartallax/opis-dump-webgui",
+  "version": "1.0.0",
+  "description": "Web GUI for dumps from patched Opis mod for Minecraft",
+  "author": "Nartallax",
+  "license": "0BSD",
+  "type": "module",
+  "scripts": {
+    "release": "npm run typecheck && npm run release:prepare && npm run release:client",
+    "release:prepare": "rm -rf ./target && rm -rf ./dist && mkdir target",
+    "release:client": "npm run icons:generate && npx parcel build --target client_release --no-cache && mv dist/client_release/* target",
+    "dev": "npm run typecheck && npm run icons:generate && npm run dev:client & npx serve -l 61537 --no-port-switching --cors & wait",
+    "dev:client": "npx parcel serve --target client_dev --no-cache --no-hmr --port 24658",
+    "typecheck": "cd src && npx tsc --noEmit && cd - > /dev/null",
+    "icons:generate": "npx icon-font-tool --svg-dir src/icons --font-path src/generated/icons --font-normalize --font-descent 150 --css-path src/generated/icons.css --ts-path src/generated/icons.ts --ts-css-import-style star --ts-name Icon"
+  },
+  "devDependencies": {
+    "@nartallax/icon-font-tool": "^1.0.6",
+    "@parcel/core": "^2.9.1",
+    "@parcel/transformer-html": "^2.9.1",
+    "@parcel/transformer-js": "^2.9.1",
+    "@parcel/transformer-react-refresh-wrap": "^2.9.1",
+    "@parcel/transformer-sass": "^2.9.1",
+    "@types/rbush": "^3.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.48.0",
+    "parcel": "^2.9.1",
+    "parcel-resolver-ts-base-url": "^1.3.1",
+    "postcss": "^8.4.29",
+    "postcss-modules": "^4.3.1",
+    "serve": "^14.2.1",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "@nartallax/cardboard": "^2.1.10",
+    "@nartallax/cardboard-dom": "^2.0.8",
+    "rbush": "^3.0.1"
+  },
+  "targets": {
+    "client_dev": {
+      "source": "src/index.html"
+    },
+    "client_release": {
+      "source": "src/index.html",
+      "optimize": true
+    }
+  }
+}

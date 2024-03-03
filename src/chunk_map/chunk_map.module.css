@@ -1,0 +1,135 @@
+.chunkMapContainer {
+	overflow: hidden;
+	flex: 1 1 0;
+	align-self: stretch;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+.chunkMap {
+	position: relative;
+}
+
+.buttons {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	padding: 0.5rem 0.5rem 1rem 0.5rem;
+	opacity: 0.25;
+	transition: opacity 0.2s;
+	display: flex;
+	flex-direction: row;
+}
+
+.buttons:hover {
+	opacity: 1;
+}
+
+.chunk {
+	position: absolute;
+	cursor: pointer;
+
+	width: 14px;
+	height: 14px;
+	border: 1px solid #222;
+	z-index: 0;
+}
+
+.chunk:hover {
+	outline: 2px solid #fff;
+	z-index: 1;
+}
+
+.chunkHint {
+	transform-origin: top left;
+	position: absolute;
+	padding: 0.5rem;
+	border: 2px solid #555;
+	border-radius: 3px;
+	background-color: #444;
+	color: #bbb;
+	white-space: pre;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.grid {
+	position: absolute;
+}
+
+.grid .v {
+	height: 100%;
+	width: 5px;
+	transform: translateX(-2.5px);
+}
+
+.grid .v.bold {
+	width: 11px;
+	transform: translateX(-5.5px);
+}
+
+.grid .h {
+	width: 100%;
+	height: 5px;
+	transform: translateY(-2.5px);
+}
+
+.grid .h.bold {
+	height: 11px;
+	transform: translateY(-5.5px);
+}
+
+.grid .v, .grid .h {
+	position: absolute;
+	background-color: #555;
+}
+
+.ownershipRegion {
+	position: absolute;
+	outline: 2px solid #666;
+	border-radius: 3px;
+	background-color: rgba(128, 128, 128, 0.25);
+	cursor: pointer;
+}
+
+.regionPivot {
+	position: absolute;
+	width: 7px;
+	height: 7px;
+	border: 2px solid #888;
+	border-radius: 100%;
+}
+
+/* marker class */
+.draggable {
+	cursor: pointer;
+}
+
+.regionModal {
+	padding: 0.5rem 0 0.5rem 0.5rem;
+	border: 2px solid #555;
+	border-radius: 3px;
+	background-color: #444;
+
+	position: absolute;
+}
+
+.regionModalButtons {
+	display: flex;
+	padding-top: 0.5rem;
+	justify-content: flex-end;
+	flex-direction: row;
+}
+
+.regionOwnerLabel {
+	white-space: pre;
+	display: flex;
+	flex-direction: row;
+}
+
+.regionOwnerName {
+	padding-right: 0.5rem;
+}
