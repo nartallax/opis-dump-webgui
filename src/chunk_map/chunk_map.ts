@@ -73,7 +73,10 @@ export const ChunkMap = ({chunks, dump, isEditing, ownership, selectedDim, rebui
 		const rect = wrap.getBoundingClientRect()
 		const xRatio = rect.width / (b.maxX - b.minX)
 		const yRatio = rect.height / (b.maxY - b.minY)
-		const ratio = Math.min(xRatio, yRatio)
+		let ratio = Math.min(xRatio, yRatio)
+		if(!Number.isFinite(ratio)){
+			ratio = 1
+		}
 		pan.zoom.set(ratio * 0.9)
 		pan.x.set(b.minX + ((b.maxX - b.minX) / 2))
 		pan.y.set(b.minY + ((b.maxY - b.minY) / 2))

@@ -23,6 +23,15 @@ export const MainPage = () => {
 		return top.set(entries)
 	}
 
+	const onDumpLoaded = (dump: Dump) => {
+		const dims = new Set(dump.dims.keys())
+		if(!dims.has(selectedDim.get())){
+			const lowestDim = [...dims].sort((a, b) => a - b)[0] ?? 0
+			selectedDim.set(lowestDim)
+		}
+		rebuildTop()
+	}
+
 	void loadOwnership(ownership).then(rebuildTop)
 
 	const result = tag({class: css.mainPage}, [
@@ -56,7 +65,7 @@ export const MainPage = () => {
 	onMount(result, () => {
 		const interval = setInterval(() => {
 			if(isAutoUpdating.get()){
-				void loadDump(dump).then(rebuildTop)
+				void loadDump(dump).then(onDumpLoaded)
 			}
 		}, 60000)
 
@@ -74,7 +83,7 @@ export const MainPage = () => {
 
 	bindBox(result, isAutoUpdating, isAutoUpdating => {
 		if(isAutoUpdating){
-			void loadDump(dump).then(rebuildTop)
+			void loadDump(dump).then(onDumpLoaded)
 		}
 	})
 

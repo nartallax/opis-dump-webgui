@@ -40,6 +40,5 @@ export function parseDump(tsv: string): Dump {
 	}
 
 
-	console.log({loadSum: totalLoad})
 	return {date, dims, totalLoad}
 }

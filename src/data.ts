@@ -8,10 +8,12 @@ const isDev = window.location.hostname === "localhost"
 const dumpUrl = isDev ? "http://localhost:61537/chunk_stats_dump.tsv" : "https://api.zonasumraka.ru/chunk_stats_dump.tsv"
 const ownershipUrl = "./chunk_ownership.json"
 
-export async function loadDump(dump: WBox<Dump | null>): Promise<void> {
+export async function loadDump(dump: WBox<Dump | null>): Promise<Dump> {
 	const resp = await fetch(dumpUrl)
-	const buffer = await resp.text()
-	dump.set(parseDump(buffer))
+	const tsv = await resp.text()
+	const result = parseDump(tsv)
+	dump.set(result)
+	return result
 }
 
 export const regionId = {id: 1}
