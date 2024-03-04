@@ -9,9 +9,22 @@
 	flex: 1 1 auto;
 }
 
-.loadEntry {
+.loadEntry, .loadTotal {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+}
+
+.loadTotal {
+	margin-bottom: 1.5rem;
+}
+
+.spacer {
+	flex: 1 1 0;
+}
+
+.loadPercent {
+	width: 80px;
+	text-align: right;
 }

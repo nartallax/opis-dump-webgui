@@ -15,14 +15,28 @@ interface Props {
 
 export const LoadTop = (props: Props) => {
 	return tag({class: css.loadTop}, [
+		tag({class: css.loadTotal}, [
+			props.dump.map(d => {
+				const load = d?.totalLoad ?? 0
+				return [
+					tag(["Total:"]),
+					tag({class: css.spacer}),
+					tag([(load / 1000000).toFixed(3) + "ms"]),
+					tag({class: css.loadPercent}, ["(100.00%)"])
+				]
+			})
+		]),
 		props.data.mapArray(
 			entry => entry.owner,
 			entry => tag({class: css.loadEntry}, [
 				tag([entry.prop("owner")]),
-				tag([calcBox([entry.prop("load"), props.dump], (load, dump) => {
-					const loadTimeStr = (load / 1000000).toFixed(3) + "ms"
+				tag({class: css.spacer}),
+				tag([entry.prop("load").map(load => {
+					return (load / 1000000).toFixed(3) + "ms"
+				})]),
+				tag({class: css.loadPercent}, [calcBox([entry.prop("load"), props.dump], (load, dump) => {
 					const loadPercentStr = ((load / (dump?.totalLoad ?? 0)) * 100).toFixed(2)
-					return `${loadTimeStr} (${loadPercentStr}%)`
+					return `(${loadPercentStr}%)`
 				})])
 			])
 		)
