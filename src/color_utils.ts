@@ -129,7 +129,8 @@ export function transformColorHsl(colorRgb: number, transform: (hsl: [number, nu
 	)
 }
 
-function lerp(a: number, b: number, progress: number): number {
+export function lerp(a: number, b: number, progress: number): number {
+	progress = Math.min(1, Math.max(0, progress))
 	return a + ((b - a) * progress)
 }
 

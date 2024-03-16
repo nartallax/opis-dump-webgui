@@ -4,20 +4,15 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import mcp.mobius.mobiuscore.profiler.ProfilerSection;
 import mcp.mobius.opis.data.holders.basetypes.SerialInt;
 import mcp.mobius.opis.data.holders.basetypes.SerialLong;
 import mcp.mobius.opis.data.holders.newtypes.*;
-import mcp.mobius.opis.data.holders.stats.StatsChunk;
 import mcp.mobius.opis.data.managers.ChunkManager;
 import mcp.mobius.opis.data.managers.EntityManager;
-import mcp.mobius.opis.data.managers.MetaManager;
 import mcp.mobius.opis.data.managers.StringCache;
 import mcp.mobius.opis.data.managers.TileEntityManager;
 import mcp.mobius.opis.data.profilers.ProfilerPacket;
@@ -42,7 +37,8 @@ public enum OpisServerTickHandler {
     public EventTimer timer5000 = new EventTimer(5000);
     public EventTimer timer10000 = new EventTimer(10000);
     // <custom update: stat dumping>
-    public EventTimer dumpTimer = new EventTimer(1000 * 60 * 60 * 2);
+    public EventTimer timerMinute = new EventTimer(1000 * 60);
+    private Dumper dumper = new Dumper();
     // </custom update: stat dumping>
 
     public HashMap<EntityPlayerMP, AccessLevel> cachedAccess = new HashMap<>();
@@ -58,48 +54,6 @@ public enum OpisServerTickHandler {
         scheduledCalls.clear();
     }
 
-    // <custom update: stat dumping>
-    // also add required imports, you get the idea
-    private void dump() {
-        String dumpFileName = "./chunk_stats_dump.tsv";
-        File f = new File(dumpFileName);
-        FileOutputStream s = null;
-        try {
-            s = new FileOutputStream(f);
-            dumpInto(s);
-        } catch (Exception e) {
-            System.err.println("Sowwy UwU failed to take Opis dump: " + e.getMessage());
-        } finally {
-            try {
-                if (s != null) {
-                    s.flush();
-                    s.close();
-                }
-            } catch (Exception e) {
-                /* whaaatever. */
-            }
-        }
-    }
-
-    private void dumpInto(FileOutputStream o) throws java.io.IOException {
-        String result = "";
-
-        result += new Date().getTime() + "\n";
-
-        ArrayList<StatsChunk> timingChunks = ChunkManager.INSTANCE.getTopChunks(500);
-        result += timingChunks.size() + "\n";
-
-        for (StatsChunk c : timingChunks) {
-            result += c.getChunk().chunkX + "\t";
-            result += c.getChunk().chunkZ + "\t";
-            result += c.getChunk().dim + "\t";
-            result += c.getDataSum() + "\n";
-        }
-
-        o.write(result.getBytes("UTF-8"));
-    }
-    // </custom update: stat dumping>
-
     @SubscribeEvent
     public void tickEnd(TickEvent.ServerTickEvent event) {
 
@@ -110,14 +64,8 @@ public enum OpisServerTickHandler {
         StringCache.INSTANCE.syncNewCache();
 
         // <custom update: stat dumping>
-        if (dumpTimer.isDone()) {
-            if (!modOpis.profilerRun) {
-                MetaManager.reset();
-                modOpis.profilerRun = true;
-                ProfilerSection.activateAll(Side.SERVER);
-                PacketManager.sendPacketToAllSwing(
-                        new NetDataValue(Message.STATUS_START, new SerialInt(modOpis.profilerMaxTicks)));
-            }
+        if (timerMinute.isDone()) {
+            dumper.onMinutePassed();
         }
         // </custom update: stat dumping>
 
@@ -236,7 +184,7 @@ public enum OpisServerTickHandler {
             ProfilerSection.desactivateAll(Side.SERVER);
 
             // <custom update: stat dumping>
-            dump();
+            dumper.dump();
             // </custom update: stat dumping>
 
             PacketManager.sendPacketToAllSwing(

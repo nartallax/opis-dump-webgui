@@ -52,7 +52,21 @@ export const Regions = ({pan, isEditing, regions, rebuildTop}: Props) => {
 						}
 
 						if(!isEditing.get()){
-							showRegionModal(e, range, isEditing)
+							const clearHandler = () => {
+								window.removeEventListener("mouseup", handler)
+								window.removeEventListener("touchend", handler)
+							}
+							const handler = (ee: MouseEvent | TouchEvent) => {
+								const startCoords = pointerEventsToClientCoords(e)
+								const endCoords = pointerEventsToClientCoords(ee)
+								const delta = Math.sqrt(((startCoords.x - endCoords.x) ** 2) + (startCoords.y - endCoords.y) ** 2)
+								if(delta < 5){
+									showRegionModal(e, range, isEditing)
+								}
+								clearHandler()
+							}
+							window.addEventListener("mouseup", handler, {passive: true})
+							window.addEventListener("touchend", handler, {passive: true})
 							return false
 						}
 

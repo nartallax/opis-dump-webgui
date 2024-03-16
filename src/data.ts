@@ -9,7 +9,7 @@ const dumpUrl = isDev ? "http://localhost:61537/chunk_stats_dump.tsv" : "https:/
 const ownershipUrl = "./chunk_ownership.json"
 
 export async function loadDump(dump: WBox<Dump | null>): Promise<Dump> {
-	const resp = await fetch(dumpUrl)
+	const resp = await fetch(dumpUrl + "?t=" + Date.now())
 	const tsv = await resp.text()
 	const result = parseDump(tsv)
 	dump.set(result)
@@ -23,7 +23,7 @@ export async function loadOwnership(ownership: WBox<Ownership>): Promise<void> {
 		const stored = localStorage["devOwnership"]
 		result = stored ? JSON.parse(stored) : getDefaultOwnership()
 	} else {
-		const resp = await fetch(ownershipUrl)
+		const resp = await fetch(ownershipUrl + "?t=" + Date.now())
 		result = await resp.json()
 	}
 
